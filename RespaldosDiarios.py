@@ -62,7 +62,7 @@ def descargar_ftp(ftp_host, ftp_port, ftp_user, ftp_pass, ruta_remota, ruta_loca
         ftp.connect(ftp_host, ftp_port)
         ftp.login(ftp_user, ftp_pass)
         # Empresas que deben ser omitidas por tamaño o política
-        empresas_excluidas = ['PERF', 'COBE', 'MMTM','META','MISS']
+        empresas_excluidas = ['PERF'] #['PERF', 'COBE', 'MMTM','META','MISS']
 
         def descargar_recursivamente(ruta_remota_actual):
             try:
