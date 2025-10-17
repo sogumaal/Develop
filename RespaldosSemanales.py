@@ -1,7 +1,6 @@
 import ftplib
 import os
 import configparser
-import tkinter.messagebox as messagebox
 import re
 from datetime import datetime
 import tkinter as tk
@@ -39,8 +38,8 @@ def leer_guia():
         ftp_port = int(config['ftp']['port'])
         ftp_user = config['ftp']['user']
         ftp_pass = config['ftp']['password']
-        ruta_remota = config['ftp']['ruta_remota']
-        ruta_base_local = config['directorio']['ruta_local']
+        ruta_remota = config['ftp']['ruta_remota_semanal']
+        ruta_base_local = config['directorio']['ruta_local_semanal']
 
         # Mostrar calendario para seleccionar fecha
         fecha_input = seleccionar_fecha()
@@ -61,8 +60,6 @@ def descargar_ftp(ftp_host, ftp_port, ftp_user, ftp_pass, ruta_remota, ruta_loca
         ftp = ftplib.FTP()
         ftp.connect(ftp_host, ftp_port)
         ftp.login(ftp_user, ftp_pass)
-        # Empresas que deben ser omitidas por tamaño o política
-        empresas_excluidas = ['PERF', 'COBE', 'MMTM','META','MISS']
 
         def descargar_recursivamente(ruta_remota_actual):
             try:
@@ -79,13 +76,7 @@ def descargar_ftp(ftp_host, ftp_port, ftp_user, ftp_pass, ruta_remota, ruta_loca
                         ftp.cwd(ruta_remota_actual)
                         descargar_recursivamente(ruta_remota_archivo)
                     except ftplib.error_perm:
-                        empresa = archivo[:4].upper()
-
                         if fecha_str in archivo and archivo.endswith('.bak'):
-                            if empresa in empresas_excluidas:
-                                print(
-                                    f"Omitido por política: {archivo} (empresa '{empresa}' marcada como archivo extenso)")
-                                continue
                             if os.path.exists(ruta_local_archivo):
                                 try:
                                     tamano_local = os.path.getsize(ruta_local_archivo)
@@ -106,7 +97,7 @@ def descargar_ftp(ftp_host, ftp_port, ftp_user, ftp_pass, ruta_remota, ruta_loca
 
         descargar_recursivamente(ruta_remota)
         ftp.quit()
-        print("****    Descarga completada.  ******* ")
+        print("*************     Descarga completada.  *************")
         messagebox.showinfo("Finalizado", "**** Descarga completada. *******")
 
     except Exception as e:
